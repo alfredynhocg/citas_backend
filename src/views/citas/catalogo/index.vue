@@ -1,4 +1,5 @@
 <template>
+  <Vertical>
   <div class="p-6 space-y-6">
 
     <div>
@@ -137,12 +138,14 @@
     </transition>
 
   </div>
+  </Vertical>
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { Icon } from '@iconify/vue'
 import { useConfetti } from '@/composables/useConfetti'
+import Vertical from '@/layouts/vertical.vue'
 
 const { burst } = useConfetti()
 const loading = ref(false)

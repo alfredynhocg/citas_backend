@@ -49,6 +49,18 @@ export const menuItems: MenuItemType[] = [
     url: '/users/list',
   },
   {
+    key: 'categorias',
+    label: 'Categorías',
+    icon: 'lucide:tag',
+    url: '/admin/categorias',
+  },
+  {
+    key: 'negocios',
+    label: 'Negocios',
+    icon: 'lucide:store',
+    url: '/admin/negocios',
+  },
+  {
     key: 'perfil',
     label: 'Mi Perfil',
     icon: 'lucide:circle-user',

@@ -358,6 +358,18 @@ const router = createRouter({
       component: () => import('@/views/users/list/index.vue')
     },
     {
+      path: '/admin/categorias',
+      name: 'AdminCategorias',
+      meta: { title: 'Categorías' },
+      component: () => import('@/views/admin/categorias/index.vue'),
+    },
+    {
+      path: '/admin/negocios',
+      name: 'AdminNegocios',
+      meta: { title: 'Negocios' },
+      component: () => import('@/views/admin/negocios/index.vue'),
+    },
+    {
       path: '/users/:id',
       name: 'UserDetail',
       meta: { title: 'Editar Usuario', requiresAdmin: true },

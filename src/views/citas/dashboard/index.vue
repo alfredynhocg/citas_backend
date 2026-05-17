@@ -1,4 +1,5 @@
 <template>
+  <Vertical>
   <div class="p-6 space-y-6">
 
     <!-- Encabezado -->
@@ -133,6 +134,7 @@
     </div>
 
   </div>
+  </Vertical>
 </template>
 
 <script setup lang="ts">
@@ -140,6 +142,7 @@ import { ref, computed, onMounted } from 'vue'
 import { Icon } from '@iconify/vue'
 import { useAuthStore } from '@/stores/auth'
 import { useCountUp } from '@/composables/useCountUp'
+import Vertical from '@/layouts/vertical.vue'
 
 const auth = useAuthStore()
 const loadingRecent = ref(true)

@@ -254,7 +254,7 @@ const emailError = computed(() => {
 })
 const passError = computed(() => {
   if (!passTouched.value || !password.value) return ''
-  return password.value.length >= 8 ? '' : 'Mínimo 8 caracteres'
+  return password.value.length >= 4 ? '' : 'Mínimo 4 caracteres'
 })
 
 const particles = Array.from({ length: 12 }, (_, i) => ({
@@ -308,7 +308,7 @@ async function handleLogin() {
   loading.value  = true
   try {
     await authStore.login(email.value, password.value)
-    router.push('/dashboard/citas')
+    router.push('/dashboard/ecommerce')
   } catch (e: unknown) {
     errorMsg.value = e instanceof Error ? e.message : 'Credenciales incorrectas'
   } finally {

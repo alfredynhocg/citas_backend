@@ -1,4 +1,5 @@
 <template>
+  <Vertical>
   <div class="p-6 space-y-6">
     <div>
       <h1 class="text-2xl font-bold text-default-900">Parejas</h1>
@@ -69,11 +70,13 @@
       </div>
     </div>
   </div>
+  </Vertical>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { Icon } from '@iconify/vue'
+import Vertical from '@/layouts/vertical.vue'
 
 const loading = ref(true)
 const parejas = ref<{ id:number; name:string; userA:string; userB:string; since:string; completed:number; memories:number; rating:number }[]>([])

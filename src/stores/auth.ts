@@ -81,7 +81,9 @@ export const useAuthStore = defineStore(
     async function authFetch(url: string, options: RequestInit = {}): Promise<Response> {
       const headers = new Headers(options.headers)
       headers.set('Authorization', `Bearer ${accessToken.value}`)
-      headers.set('Content-Type', 'application/json')
+      if (!(options.body instanceof FormData)) {
+        headers.set('Content-Type', 'application/json')
+      }
 
       let res = await fetch(url, { ...options, headers })
 
@@ -104,11 +106,10 @@ export const useAuthStore = defineStore(
       user.value = null
       accessToken.value = null
       refreshToken.value = null
-      if (expired) {
-        sessionExpired.value = true
-        // Redirige al login con flag para mostrar mensaje
-        window.location.href = '/mordern-auth/login?expired=1'
-      }
+      sessionExpired.value = expired
+      window.location.href = expired
+        ? '/mordern-auth/login?expired=1'
+        : '/mordern-auth/login'
     }
 
     return {

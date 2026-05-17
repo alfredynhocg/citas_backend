@@ -1,4 +1,5 @@
 <template>
+  <Vertical>
   <div class="p-6 space-y-6">
     <div>
       <h1 class="text-2xl font-bold text-default-900">Recuerdos</h1>
@@ -44,11 +45,13 @@
       </router-link>
     </div>
   </div>
+  </Vertical>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { Icon } from '@iconify/vue'
+import Vertical from '@/layouts/vertical.vue'
 
 const loading = ref(true)
 
