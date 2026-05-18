@@ -61,9 +61,33 @@ export const menuItems: MenuItemType[] = [
     url: '/admin/negocios',
   },
   {
+    key: 'admin-citas',
+    label: 'Citas',
+    icon: 'lucide:heart-handshake',
+    url: '/admin/citas',
+  },
+  {
     key: 'perfil',
     label: 'Mi Perfil',
     icon: 'lucide:circle-user',
     url: '/perfil',
+  },
+
+  {
+    key: 'whatsapp-title',
+    label: 'WhatsApp',
+    isTitle: true,
+  },
+  {
+    key: 'whatsapp-estado',
+    label: 'Bot',
+    icon: 'lucide:bot',
+    url: '/whatsapp/estado',
+  },
+  {
+    key: 'whatsapp-conversaciones',
+    label: 'Conversaciones',
+    icon: 'lucide:message-circle',
+    url: '/whatsapp/conversaciones',
   },
 ]

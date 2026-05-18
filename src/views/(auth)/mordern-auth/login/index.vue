@@ -308,7 +308,7 @@ async function handleLogin() {
   loading.value  = true
   try {
     await authStore.login(email.value, password.value)
-    router.push('/dashboard/ecommerce')
+    router.push('/dashboard/citas')
   } catch (e: unknown) {
     errorMsg.value = e instanceof Error ? e.message : 'Credenciales incorrectas'
   } finally {

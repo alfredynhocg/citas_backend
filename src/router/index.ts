@@ -370,6 +370,30 @@ const router = createRouter({
       component: () => import('@/views/admin/negocios/index.vue'),
     },
     {
+      path: '/admin/citas',
+      name: 'AdminCitas',
+      meta: { title: 'Citas' },
+      component: () => import('@/views/admin/citas/index.vue'),
+    },
+    {
+      path: '/whatsapp/estado',
+      name: 'WhatsappEstado',
+      meta: { title: 'Bot WhatsApp' },
+      component: () => import('@/views/whatsapp/estado/index.vue'),
+    },
+    {
+      path: '/whatsapp/conversaciones',
+      name: 'WhatsappConversaciones',
+      meta: { title: 'Conversaciones WhatsApp' },
+      component: () => import('@/views/whatsapp/conversaciones/index.vue'),
+    },
+    {
+      path: '/whatsapp/mensajes/:phone(.*)',
+      name: 'WhatsappMensajes',
+      meta: { title: 'Chat WhatsApp' },
+      component: () => import('@/views/whatsapp/mensajes/index.vue'),
+    },
+    {
       path: '/users/:id',
       name: 'UserDetail',
       meta: { title: 'Editar Usuario', requiresAdmin: true },
