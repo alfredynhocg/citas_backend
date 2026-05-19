@@ -5,12 +5,12 @@ export const currency: CurrencyType = '$'
 export const currentYear = new Date().getFullYear()
 
 export const appFavicon = '/favicon.ico'
-export const appName = 'Tailwick'
-export const appTitle = 'Tailwick - Tailwind CSS 3 Admin Layout & UI Kit Template'
-export const appDescription: string = 'A fully featured admin theme which can be used to build CRM, CMS, etc.'
+export const appName = '100 Citas Románticas'
+export const appTitle = '100 Citas Románticas — La Paz, Bolivia'
+export const appDescription: string = 'App para parejas que quieren vivir 100 experiencias únicas juntos en La Paz.'
 
-export const author: string = 'Themesdesign'
-export const authorWebsite: string = 'https://themesdesign.in/'
+export const author: string = 'devAcg'
+export const authorWebsite: string = ''
 export const authorContact: string = ''
 
 export const basePath: string = ''

@@ -2,9 +2,16 @@
   <Vertical>
     <div class="p-4 sm:p-6 space-y-6">
 
-      <div>
-        <h1 class="text-2xl font-bold text-default-900">Gestión de Pagos</h1>
-        <p class="text-sm text-default-500 mt-0.5">Aprueba o rechaza los pagos de suscripción pendientes.</p>
+      <div class="flex items-start justify-between gap-3">
+        <div>
+          <h1 class="text-2xl font-bold text-default-900">Gestión de Pagos</h1>
+          <p class="text-sm text-default-500 mt-0.5">Aprueba o rechaza los pagos de suscripción pendientes.</p>
+        </div>
+        <button @click="exportarPDF"
+          class="inline-flex items-center gap-2 border border-default-200 text-default-600 text-sm font-semibold px-3 py-2 rounded-xl hover:bg-default-50 transition-colors flex-shrink-0">
+          <Icon icon="lucide:download" class="size-4" />
+          PDF
+        </button>
       </div>
 
       <div v-if="reportes" class="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -241,6 +248,60 @@ async function rechazarNegocio(id: number) {
   } finally {
     procesandoNegocio.value = null
   }
+}
+
+function exportarPDF() {
+  const r = reportes.value
+  const filasP = pagos.value.map(p => `
+    <tr>
+      <td style="padding:7px 12px;border-bottom:1px solid #f1f5f9;font-weight:600">${p.usuario ?? '—'}</td>
+      <td style="padding:7px 12px;border-bottom:1px solid #f1f5f9">Bs ${p.monto}</td>
+      <td style="padding:7px 12px;border-bottom:1px solid #f1f5f9">${p.plan ?? '—'}</td>
+      <td style="padding:7px 12px;border-bottom:1px solid #f1f5f9;color:#d97706">Pendiente</td>
+      <td style="padding:7px 12px;border-bottom:1px solid #f1f5f9;color:#94a3b8">${p.fecha_pago?.slice(0,10) ?? '—'}</td>
+    </tr>`).join('')
+
+  const html = `<!DOCTYPE html><html><head><meta charset="utf-8">
+  <title>Reporte de Pagos — 100 Citas Románticas</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Arial,sans-serif}
+    body{padding:40px;color:#1e293b;font-size:12px}
+    .header{border-bottom:3px solid #f43f5e;padding-bottom:16px;margin-bottom:24px}
+    h1{font-size:20px;color:#f43f5e}
+    .sub{color:#94a3b8;font-size:11px;margin-top:4px}
+    .stats{display:flex;gap:16px;margin-bottom:24px}
+    .stat{background:#fdf2f4;border-radius:10px;padding:12px 20px;text-align:center;min-width:110px}
+    .stat .val{font-size:22px;font-weight:700;color:#f43f5e}
+    .stat .lbl{font-size:10px;color:#94a3b8;margin-top:2px}
+    h2{font-size:13px;color:#475569;margin-bottom:10px}
+    table{width:100%;border-collapse:collapse;margin-bottom:24px}
+    thead th{background:#fdf2f4;padding:8px 12px;text-align:left;font-size:10px;color:#f43f5e;text-transform:uppercase;letter-spacing:.05em}
+    .footer{margin-top:16px;text-align:center;font-size:10px;color:#94a3b8;border-top:1px solid #f1f5f9;padding-top:12px}
+  </style></head><body>
+  <div class="header">
+    <h1>Reporte de Pagos — 100 Citas Románticas</h1>
+    <p class="sub">Generado el ${new Date().toLocaleDateString('es-BO',{day:'2-digit',month:'long',year:'numeric'})}</p>
+  </div>
+  ${r ? `<div class="stats">
+    <div class="stat"><div class="val">${r.pagos_pendientes ?? 0}</div><div class="lbl">Pendientes</div></div>
+    <div class="stat"><div class="val">${r.pagos_aprobados ?? 0}</div><div class="lbl">Aprobados</div></div>
+    <div class="stat"><div class="val">Bs ${r.ingresos_totales?.toFixed(0) ?? 0}</div><div class="lbl">Ingresos</div></div>
+  </div>` : ''}
+  <h2>Pagos Pendientes</h2>
+  <table>
+    <thead><tr><th>Usuario</th><th>Monto</th><th>Plan</th><th>Estado</th><th>Fecha</th></tr></thead>
+    <tbody>${filasP || '<tr><td colspan="5" style="padding:16px;text-align:center;color:#94a3b8">Sin pagos pendientes</td></tr>'}</tbody>
+  </table>
+  <div class="footer">100 Citas Románticas en La Paz — Panel de Administración</div>
+  </body></html>`
+
+  const w = window.open('', '_blank')
+  if (!w) return
+  w.document.open()
+  w.document.write(html)
+  w.document.close()
+  w.focus()
+  setTimeout(() => { w.print(); w.close() }, 500)
 }
 
 onMounted(() => {

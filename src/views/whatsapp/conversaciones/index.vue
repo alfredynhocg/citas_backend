@@ -14,7 +14,6 @@
         </button>
       </div>
 
-      <!-- Gestión de etiquetas -->
       <div v-if="showGestionar" class="card p-5 space-y-4">
         <h3 class="text-sm font-semibold text-default-800">Etiquetas</h3>
         <div class="flex flex-wrap gap-2 mb-3">
@@ -53,7 +52,6 @@
         </div>
       </div>
 
-      <!-- Filtros -->
       <div class="card p-4 flex flex-wrap gap-3 items-center">
         <div class="relative flex-1 min-w-[200px]">
           <Icon icon="lucide:search" class="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-default-400 pointer-events-none" />
@@ -72,7 +70,6 @@
         </select>
       </div>
 
-      <!-- Envío masivo -->
       <div v-if="seleccionados.size > 0" class="card p-4 border border-rose-200 bg-rose-50/50 space-y-3">
         <p class="text-sm font-semibold text-rose-700">{{ seleccionados.size }} conversación(es) seleccionada(s)</p>
         <div class="flex gap-3 flex-wrap">
@@ -94,7 +91,6 @@
         </div>
       </div>
 
-      <!-- Tabla -->
       <div v-if="loading" class="card overflow-hidden">
         <div class="divide-y divide-default-100">
           <div v-for="i in 6" :key="i" class="flex items-center gap-4 px-5 py-4 animate-pulse">
@@ -181,7 +177,6 @@
           </table>
         </div>
 
-        <!-- Paginación -->
         <div class="flex items-center justify-between px-5 py-3 border-t border-default-100">
           <p class="text-xs text-default-400">Mostrando {{ conversaciones.length }} de {{ total }}</p>
           <div class="flex gap-1">
@@ -295,7 +290,7 @@ async function toggleEtiquetaEnConv(c: Conversacion, etiqId: number) {
   const actualIds = c.etiquetas.map(e => e.id)
   const nuevosIds = actualIds.includes(etiqId) ? actualIds.filter(x => x !== etiqId) : [...actualIds, etiqId]
   const API = import.meta.env.VITE_API_URL ?? 'http://localhost:5000/api'
-  const res = await auth.authFetch(`${API}/whatsapp/conversaciones/${c.id}/etiquetas`, {
+  const res = await auth.authFetch(`${API}/whatsapp/conversaciones/${encodeURIComponent(c.phone)}/etiquetas`, {
     method: 'POST', body: JSON.stringify({ etiqueta_ids: nuevosIds }),
   })
   if (res.ok) {

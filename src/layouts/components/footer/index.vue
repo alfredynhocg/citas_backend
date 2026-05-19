@@ -5,8 +5,8 @@
         {{ currentYear }}
         © {{ appName }}
       </div>
-      <div class="md:flex hidden gap-2 item-center md:justify-end">
-        Design &amp; Develop by<RouterLink to="https://themesdesign.in/" target="_blank" class="text-primary">{{ author }}</RouterLink>
+      <div class="md:flex hidden gap-2 item-center md:justify-end text-default-500">
+        Desarrollado por <span class="text-primary font-medium">{{ author }}</span>
       </div>
     </div>
   </footer>
@@ -14,5 +14,4 @@
 
 <script setup lang="ts">
 import { appName, author, currentYear } from '@/helpers'
-import { RouterLink } from 'vue-router'
 </script>

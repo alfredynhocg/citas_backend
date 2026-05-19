@@ -7,7 +7,14 @@
           <h1 class="text-2xl font-bold text-default-900">Usuarios</h1>
           <p class="text-sm text-default-500 mt-0.5">Gestión de cuentas registradas.</p>
         </div>
-        <span class="text-sm text-default-400 pt-1.5">{{ total }} usuario(s)</span>
+        <div class="flex items-center gap-3">
+          <span class="text-sm text-default-400">{{ total }} usuario(s)</span>
+          <button @click="exportarPDF"
+            class="inline-flex items-center gap-2 border border-default-200 text-default-600 text-sm font-semibold px-3 py-2 rounded-xl hover:bg-default-50 transition-colors">
+            <Icon icon="lucide:download" class="size-4" />
+            PDF
+          </button>
+        </div>
       </div>
 
       <div class="card p-4 flex flex-wrap gap-3 items-center">
@@ -245,6 +252,51 @@ function avatarColor(role: string) {
 function formatDate(iso: string) {
   if (!iso) return '—'
   return new Date(iso).toLocaleDateString('es-BO', { day: '2-digit', month: 'short', year: 'numeric' })
+}
+
+function exportarPDF() {
+  const filas = filtered.value.map(u => `
+    <tr>
+      <td style="padding:7px 12px;border-bottom:1px solid #f1f5f9">${u.id}</td>
+      <td style="padding:7px 12px;border-bottom:1px solid #f1f5f9;font-weight:600">${u.name}</td>
+      <td style="padding:7px 12px;border-bottom:1px solid #f1f5f9;color:#64748b">${u.email}</td>
+      <td style="padding:7px 12px;border-bottom:1px solid #f1f5f9">${roleLabel(u.role)}</td>
+      <td style="padding:7px 12px;border-bottom:1px solid #f1f5f9;color:${u.is_active ? '#16a34a' : '#dc2626'}">${u.is_active ? 'Activo' : 'Inactivo'}</td>
+      <td style="padding:7px 12px;border-bottom:1px solid #f1f5f9;color:#94a3b8">${formatDate(u.created_at)}</td>
+    </tr>`).join('')
+
+  const html = `<!DOCTYPE html><html><head><meta charset="utf-8">
+  <title>Usuarios — 100 Citas Románticas</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Arial,sans-serif}
+    body{padding:40px;color:#1e293b;font-size:12px}
+    .header{border-bottom:3px solid #f43f5e;padding-bottom:16px;margin-bottom:24px}
+    h1{font-size:20px;color:#f43f5e}
+    .sub{color:#94a3b8;font-size:11px;margin-top:4px}
+    .badge{display:inline-block;padding:2px 8px;border-radius:999px;font-size:10px;font-weight:600;background:#fdf2f4;color:#f43f5e;margin-bottom:20px}
+    table{width:100%;border-collapse:collapse}
+    thead th{background:#fdf2f4;padding:8px 12px;text-align:left;font-size:10px;color:#f43f5e;text-transform:uppercase;letter-spacing:.05em}
+    .footer{margin-top:28px;text-align:center;font-size:10px;color:#94a3b8;border-top:1px solid #f1f5f9;padding-top:12px}
+  </style></head><body>
+  <div class="header">
+    <h1>Listado de Usuarios — 100 Citas Románticas</h1>
+    <p class="sub">Generado el ${new Date().toLocaleDateString('es-BO', { day:'2-digit', month:'long', year:'numeric' })}</p>
+  </div>
+  <span class="badge">${total.value} usuarios en total</span>
+  <table>
+    <thead><tr><th>#</th><th>Nombre</th><th>Email</th><th>Rol</th><th>Estado</th><th>Registro</th></tr></thead>
+    <tbody>${filas}</tbody>
+  </table>
+  <div class="footer">100 Citas Románticas en La Paz — Panel de Administración</div>
+  </body></html>`
+
+  const w = window.open('', '_blank')
+  if (!w) return
+  w.document.open()
+  w.document.write(html)
+  w.document.close()
+  w.focus()
+  setTimeout(() => { w.print(); w.close() }, 500)
 }
 
 function confirmDelete(u: UserItem) {

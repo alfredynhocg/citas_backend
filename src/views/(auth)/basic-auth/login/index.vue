@@ -71,6 +71,27 @@
           </RouterLink>
         </p>
       </div>
+
+      <!-- Cuentas de prueba -->
+      <div class="mt-6 border border-default-200 rounded-xl p-4 space-y-2">
+        <p class="text-xs font-semibold text-default-500 uppercase tracking-wide mb-3">Cuentas de prueba</p>
+        <button v-for="c in cuentas" :key="c.email" type="button"
+          @click="usarCuenta(c)"
+          class="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-default-50 transition-colors text-left group">
+          <div class="size-8 rounded-lg flex items-center justify-center text-xs font-bold flex-shrink-0"
+            :class="c.color">
+            {{ c.initials }}
+          </div>
+          <div class="min-w-0 flex-1">
+            <p class="text-sm font-medium text-default-800">{{ c.nombre }}</p>
+            <p class="text-xs text-default-400 truncate">{{ c.email }}</p>
+          </div>
+          <span class="text-[10px] px-1.5 py-0.5 rounded-full font-medium flex-shrink-0"
+            :class="c.rol === 'Admin' ? 'bg-amber-100 text-amber-700' : 'bg-rose-100 text-rose-600'">
+            {{ c.rol }}
+          </span>
+        </button>
+      </div>
     </form>
   </Auth>
 </template>
@@ -90,6 +111,19 @@ const password = ref('')
 const showPassword = ref(false)
 const loading = ref(false)
 const errorMsg = ref('')
+
+const cuentas = [
+  { nombre: 'Carlos Mamani',     email: 'carlos@citas.bo',    initials: 'CM', rol: 'Usuario', color: 'bg-rose-100 text-rose-600' },
+  { nombre: 'Sofía Quispe',      email: 'sofia@citas.bo',     initials: 'SQ', rol: 'Usuario', color: 'bg-violet-100 text-violet-600' },
+  { nombre: 'Diego Flores',      email: 'diego@citas.bo',     initials: 'DF', rol: 'Usuario', color: 'bg-blue-100 text-blue-600' },
+  { nombre: 'Valentina Rios',    email: 'valentina@citas.bo', initials: 'VR', rol: 'Usuario', color: 'bg-pink-100 text-pink-600' },
+  { nombre: 'Admin',             email: 'admin@citas.bo',     initials: 'AP', rol: 'Admin',   color: 'bg-amber-100 text-amber-600' },
+]
+
+function usarCuenta(c: { email: string; rol: string }) {
+  email.value    = c.email
+  password.value = c.rol === 'Admin' ? 'admin123' : 'test1234'
+}
 
 async function handleLogin() {
   errorMsg.value = ''

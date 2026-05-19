@@ -219,6 +219,46 @@
 
       </template>
 
+      <div class="space-y-3">
+        <div class="flex items-center justify-between">
+          <h2 class="text-base font-bold text-default-800">Listado de parejas</h2>
+          <span class="text-xs text-default-400 font-medium">{{ listaParejas.length }} parejas registradas</span>
+        </div>
+
+        <div v-if="loadingListado" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div v-for="i in 4" :key="i" class="card p-4 animate-pulse h-20 bg-default-50" />
+        </div>
+
+        <div v-else-if="listaParejas.length === 0"
+          class="card p-6 text-center text-sm text-default-400">
+          No hay parejas registradas aún.
+        </div>
+
+        <div v-else class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div v-for="p in listaParejas" :key="p.id"
+            class="card p-4 flex items-center gap-4 hover:shadow-md transition-shadow">
+            <div class="flex -space-x-2 flex-shrink-0">
+              <div class="size-9 rounded-xl bg-rose-100 border-2 border-white flex items-center justify-center text-rose-600 font-bold text-xs shadow-sm">
+                {{ initials(p.miembro1.nombre) }}
+              </div>
+              <div class="size-9 rounded-xl bg-violet-100 border-2 border-white flex items-center justify-center text-violet-600 font-bold text-xs shadow-sm">
+                {{ initials(p.miembro2.nombre) }}
+              </div>
+            </div>
+            <div class="min-w-0 flex-1">
+              <p class="font-semibold text-default-800 text-sm truncate">
+                {{ p.miembro1.nombre }} &amp; {{ p.miembro2.nombre }}
+              </p>
+              <p class="text-xs text-default-400 truncate">{{ p.miembro1.email }}</p>
+            </div>
+            <span class="flex-shrink-0 inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-rose-100 text-rose-600">
+              <Icon icon="lucide:heart" class="size-2.5" />
+              Vinculados
+            </span>
+          </div>
+        </div>
+      </div>
+
       <Teleport to="body">
         <transition name="modal">
           <div v-if="confirmarDesvincular" class="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -274,6 +314,7 @@ const API  = import.meta.env.VITE_API_URL ?? 'http://localhost:5000/api'
 
 interface Pareja  { id: number; nombre: string; email: string }
 interface Progreso { citas_completadas: number; puntos_totales: number; racha_actual: number }
+interface ParejaItem { id: number; nombre: string; codigo_invitacion: string; miembro1: { id: number; nombre: string; email: string }; miembro2: { id: number; nombre: string; email: string } }
 
 const loading              = ref(true)
 const pareja               = ref<Pareja | null>(null)
@@ -292,8 +333,24 @@ const loadingUnir = ref(false)
 const msgUnir     = ref({ text: '', ok: false })
 const formUnir    = ref({ codigo: '' })
 
+const listaParejas     = ref<ParejaItem[]>([])
+const loadingListado   = ref(false)
+
 function initials(name: string) {
   return name.split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase()
+}
+
+async function fetchListaParejas() {
+  loadingListado.value = true
+  try {
+    const res = await auth.authFetch(`${API}/grupos/parejas`)
+    if (!res.ok) return
+    listaParejas.value = await res.json()
+  } catch {
+    listaParejas.value = []
+  } finally {
+    loadingListado.value = false
+  }
 }
 
 async function fetchPareja() {
@@ -386,7 +443,7 @@ async function copiarCodigo() {
   setTimeout(() => (copiado.value = false), 2000)
 }
 
-onMounted(fetchPareja)
+onMounted(() => { fetchPareja(); fetchListaParejas() })
 </script>
 
 <style scoped>

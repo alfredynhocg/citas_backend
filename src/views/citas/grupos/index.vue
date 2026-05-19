@@ -27,8 +27,12 @@
             <div>
               <h3 class="font-semibold text-default-900">{{ g.nombre }}</h3>
               <span class="inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full mt-1"
-                :class="g.tipo === 'pareja' ? 'bg-rose-100 text-rose-600' : 'bg-blue-100 text-blue-600'">
-                <Icon :icon="g.tipo === 'pareja' ? 'lucide:heart' : 'lucide:users'" class="size-3" />
+                :class="{
+                  'bg-rose-100 text-rose-600':   g.tipo === 'pareja',
+                  'bg-blue-100 text-blue-600':   g.tipo === 'amigos',
+                  'bg-amber-100 text-amber-600': g.tipo === 'familia',
+                }">
+                <Icon :icon="g.tipo === 'pareja' ? 'lucide:heart' : g.tipo === 'familia' ? 'lucide:home' : 'lucide:users'" class="size-3" />
                 {{ g.tipo }}
               </span>
             </div>
