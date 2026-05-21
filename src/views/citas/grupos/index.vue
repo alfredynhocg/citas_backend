@@ -13,13 +13,7 @@
         </button>
       </div>
 
-      <div v-if="loading" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <div v-for="i in 3" :key="i" class="card p-5 animate-pulse space-y-3">
-          <div class="h-4 bg-default-100 rounded w-2/3" />
-          <div class="h-3 bg-default-100 rounded w-1/3" />
-          <div class="h-8 bg-default-100 rounded-xl" />
-        </div>
-      </div>
+      <AppLoader v-if="loading" />
 
       <div v-else-if="grupos.length" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <div v-for="g in grupos" :key="g.id" class="card p-5 space-y-4">
@@ -154,6 +148,7 @@
 import { ref, onMounted } from 'vue'
 import { Icon } from '@iconify/vue'
 import Vertical from '@/layouts/vertical.vue'
+import AppLoader from '@/components/AppLoader.vue'
 import { useAuthStore } from '@/stores/auth'
 
 const API = import.meta.env.VITE_API_URL ?? 'http://localhost:5000/api'

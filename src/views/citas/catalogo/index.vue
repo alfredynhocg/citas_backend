@@ -17,7 +17,6 @@
         </div>
       </div>
 
-      <!-- Filtros -->
       <div class="flex gap-2 flex-wrap">
         <button v-for="cat in categorias" :key="cat.id ?? 'todas'"
           @click="filtroCategoria = cat.id ?? null"
@@ -31,7 +30,6 @@
         </button>
       </div>
 
-      <!-- Búsqueda -->
       <div class="relative max-w-sm">
         <Icon icon="lucide:search" class="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-default-400 pointer-events-none" />
         <input v-model="busqueda" type="text" placeholder="Buscar cita…"
@@ -40,21 +38,8 @@
                  bg-default-50 placeholder-default-400 transition-all" />
       </div>
 
-      <!-- Skeleton -->
-      <div v-if="loading" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        <div v-for="i in 8" :key="i" class="card p-5 animate-pulse space-y-3">
-          <div class="h-32 bg-default-100 rounded-xl" />
-          <div class="h-3 bg-default-100 rounded w-1/4" />
-          <div class="h-4 bg-default-100 rounded w-3/4" />
-          <div class="h-3 bg-default-100 rounded w-full" />
-          <div class="flex gap-2 mt-2">
-            <div class="h-5 w-16 bg-default-100 rounded-full" />
-            <div class="h-5 w-16 bg-default-100 rounded-full" />
-          </div>
-        </div>
-      </div>
+      <AppLoader v-if="loading" />
 
-      <!-- Grid -->
       <template v-else>
         <div v-if="filtradas.length" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           <div v-for="cita in filtradas" :key="cita.id"
@@ -118,7 +103,6 @@
 
     </div>
 
-    <!-- Drawer detalle -->
     <Teleport to="body">
       <transition name="slide">
         <div v-if="seleccionada" class="fixed inset-0 z-50 flex">
@@ -237,6 +221,7 @@ import { ref, computed, onMounted } from 'vue'
 import { Icon } from '@iconify/vue'
 import { useAuthStore } from '@/stores/auth'
 import Vertical from '@/layouts/vertical.vue'
+import AppLoader from '@/components/AppLoader.vue'
 
 const auth = useAuthStore()
 const API  = import.meta.env.VITE_API_URL ?? 'http://localhost:5000/api'

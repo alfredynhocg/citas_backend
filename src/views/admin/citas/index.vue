@@ -55,22 +55,7 @@
         </div>
       </div>
 
-      <div v-if="loading" class="card overflow-hidden">
-        <div class="divide-y divide-default-100">
-          <div v-for="i in 5" :key="i" class="flex items-center gap-4 px-6 py-4 animate-pulse">
-            <div class="size-12 rounded-xl bg-default-100 flex-shrink-0" />
-            <div class="flex-1 space-y-2">
-              <div class="h-3.5 bg-default-100 rounded w-1/3" />
-              <div class="h-3 bg-default-100 rounded w-1/2" />
-            </div>
-            <div class="h-6 w-16 bg-default-100 rounded-full" />
-            <div class="flex gap-2">
-              <div class="h-8 w-16 bg-default-100 rounded-lg" />
-              <div class="h-8 w-16 bg-default-100 rounded-lg" />
-            </div>
-          </div>
-        </div>
-      </div>
+      <AppLoader v-if="loading" />
 
       <template v-else>
         <div v-if="citas.length" class="card overflow-hidden">
@@ -470,6 +455,7 @@ import { ref, computed, onMounted, reactive } from 'vue'
 import { Icon } from '@iconify/vue'
 import { useAuthStore } from '@/stores/auth'
 import Vertical from '@/layouts/vertical.vue'
+import AppLoader from '@/components/AppLoader.vue'
 
 const auth = useAuthStore()
 const API  = import.meta.env.VITE_API_URL ?? 'http://localhost:5000/api'

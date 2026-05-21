@@ -430,6 +430,24 @@ const router = createRouter({
       component: () => import('@/views/whatsapp/configuracion/index.vue'),
     },
     {
+      path: '/reportes/general',
+      name: 'ReporteGeneral',
+      meta: { title: 'Reporte General' },
+      component: () => import('@/views/reportes/general/index.vue'),
+    },
+    {
+      path: '/reportes/tendencias',
+      name: 'ReporteTendencias',
+      meta: { title: 'Reporte Tendencias' },
+      component: () => import('@/views/reportes/tendencias/index.vue'),
+    },
+    {
+      path: '/reportes/prediccion',
+      name: 'ReportePrediccion',
+      meta: { title: 'Reporte Predicción' },
+      component: () => import('@/views/reportes/prediccion/index.vue'),
+    },
+    {
       path: '/users/:id',
       name: 'UserDetail',
       meta: { title: 'Editar Usuario', requiresAdmin: true },

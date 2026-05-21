@@ -28,5 +28,6 @@ export type MenuItemType = {
   target?: string
   isDisabled?: boolean
   isSpecial?: boolean
+  requiresAdmin?: boolean
   children?: MenuItemType[]
 }

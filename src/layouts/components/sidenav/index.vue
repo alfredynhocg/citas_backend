@@ -1,6 +1,6 @@
 <template>
   <aside id="app-menu" class="app-menu">
-    <RouterLink to="/" class="logo-box sticky top-0 flex min-h-topbar-height items-center justify-start px-6 backdrop-blur-xs">
+    <RouterLink to="/dashboard/citas" class="logo-box sticky top-0 flex min-h-topbar-height items-center justify-start px-6 backdrop-blur-xs">
       <div class="logo-light">
         <AppLogo class="logo-lg" />
         <AppLogo small class="logo-sm" />

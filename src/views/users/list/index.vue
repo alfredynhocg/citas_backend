@@ -33,9 +33,7 @@
       </div>
 
       <div class="card overflow-hidden">
-        <div v-if="loading" class="flex justify-center py-16">
-          <Icon icon="lucide:loader-circle" class="size-8 animate-spin text-rose-400" />
-        </div>
+        <AppLoader v-if="loading" />
 
         <div v-else-if="error" class="p-6 flex items-center gap-2 text-red-500 text-sm">
           <Icon icon="lucide:alert-circle" class="size-5 flex-shrink-0" />
@@ -193,6 +191,7 @@
 import { ref, computed, watch, onMounted } from 'vue'
 import { Icon } from '@iconify/vue'
 import Vertical from '@/layouts/vertical.vue'
+import AppLoader from '@/components/AppLoader.vue'
 import { useUsers, type UserItem } from '@/composables/useUsers'
 import { useAuthStore } from '@/stores/auth'
 

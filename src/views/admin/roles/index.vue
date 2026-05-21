@@ -14,18 +14,7 @@
         </button>
       </div>
 
-      <div v-if="loading" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <div v-for="i in 2" :key="i" class="card p-5 animate-pulse space-y-3">
-          <div class="flex items-center gap-3">
-            <div class="size-12 rounded-xl bg-default-100" />
-            <div class="flex-1 space-y-2">
-              <div class="h-4 bg-default-100 rounded w-1/2" />
-              <div class="h-3 bg-default-100 rounded w-1/3" />
-            </div>
-          </div>
-          <div class="h-3 bg-default-100 rounded" />
-        </div>
-      </div>
+      <AppLoader v-if="loading" />
 
       <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <div v-for="rol in roles" :key="rol.id"
@@ -190,6 +179,7 @@
 import { ref, onMounted } from 'vue'
 import { Icon } from '@iconify/vue'
 import Vertical from '@/layouts/vertical.vue'
+import AppLoader from '@/components/AppLoader.vue'
 import { useAuthStore } from '@/stores/auth'
 
 const API = import.meta.env.VITE_API_URL ?? 'http://localhost:5000/api'

@@ -1,6 +1,8 @@
 <template>
   <Vertical>
-    <div class="flex flex-col h-[calc(100vh-64px)]">
+    <AppLoader v-if="loading" fullPage />
+
+    <div v-else class="flex flex-col h-[calc(100vh-64px)]">
 
       <div class="flex items-center gap-4 px-5 py-4 border-b border-default-100 bg-white flex-shrink-0">
         <RouterLink to="/whatsapp/conversaciones"
@@ -28,47 +30,39 @@
       </div>
 
       <div ref="mensajesContainer" class="flex-1 overflow-y-auto px-5 py-4 space-y-3 bg-default-50/40">
-        <div v-if="loading" class="space-y-3">
-          <div v-for="i in 5" :key="i" class="flex animate-pulse" :class="i % 2 === 0 ? 'justify-end' : ''">
-            <div class="h-10 rounded-2xl bg-default-200" :class="i % 2 === 0 ? 'w-48' : 'w-64'" />
+        <div v-for="m in mensajes" :key="m.id"
+          class="flex" :class="m.direccion === 'saliente' ? 'justify-end' : 'justify-start'">
+          <div class="max-w-[75%] px-4 py-2.5 rounded-2xl text-sm shadow-sm"
+            :class="m.direccion === 'saliente'
+              ? 'bg-green-500 text-white rounded-br-sm'
+              : 'bg-white text-default-800 border border-default-100 rounded-bl-sm'">
+            <div v-if="m.tipo === 'text' || m.tipo === 'interactive'">
+              <p class="whitespace-pre-wrap break-words leading-relaxed">{{ m.contenido }}</p>
+            </div>
+            <div v-else-if="m.tipo === 'image'" class="flex items-center gap-2 text-xs opacity-80">
+              <Icon icon="lucide:image" class="size-4" /><span>Imagen</span>
+            </div>
+            <div v-else-if="m.tipo === 'audio'" class="flex items-center gap-2 text-xs opacity-80">
+              <Icon icon="lucide:mic" class="size-4" /><span>Audio</span>
+            </div>
+            <div v-else-if="m.tipo === 'document'" class="flex items-center gap-2 text-xs opacity-80">
+              <Icon icon="lucide:file-text" class="size-4" /><span>Documento</span>
+            </div>
+            <div v-else-if="m.tipo === 'location'" class="flex items-center gap-2 text-xs opacity-80">
+              <Icon icon="lucide:map-pin" class="size-4" /><span>Ubicación</span>
+            </div>
+            <div v-else class="flex items-center gap-2 text-xs opacity-80">
+              <Icon icon="lucide:message-square" class="size-4" /><span>{{ tipoLabel(m.tipo) }}</span>
+            </div>
+            <p class="text-right mt-1 text-[10px] opacity-60">
+              {{ m.created_at ? new Date(m.created_at).toLocaleTimeString('es-BO', { hour: '2-digit', minute: '2-digit' }) : '' }}
+            </p>
           </div>
         </div>
-
-        <template v-else>
-          <div v-for="m in mensajes" :key="m.id"
-            class="flex" :class="m.direccion === 'saliente' ? 'justify-end' : 'justify-start'">
-            <div class="max-w-[75%] px-4 py-2.5 rounded-2xl text-sm shadow-sm"
-              :class="m.direccion === 'saliente'
-                ? 'bg-green-500 text-white rounded-br-sm'
-                : 'bg-white text-default-800 border border-default-100 rounded-bl-sm'">
-              <div v-if="m.tipo === 'text' || m.tipo === 'interactive'">
-                <p class="whitespace-pre-wrap break-words leading-relaxed">{{ m.contenido }}</p>
-              </div>
-              <div v-else-if="m.tipo === 'image'" class="flex items-center gap-2 text-xs opacity-80">
-                <Icon icon="lucide:image" class="size-4" /><span>Imagen</span>
-              </div>
-              <div v-else-if="m.tipo === 'audio'" class="flex items-center gap-2 text-xs opacity-80">
-                <Icon icon="lucide:mic" class="size-4" /><span>Audio</span>
-              </div>
-              <div v-else-if="m.tipo === 'document'" class="flex items-center gap-2 text-xs opacity-80">
-                <Icon icon="lucide:file-text" class="size-4" /><span>Documento</span>
-              </div>
-              <div v-else-if="m.tipo === 'location'" class="flex items-center gap-2 text-xs opacity-80">
-                <Icon icon="lucide:map-pin" class="size-4" /><span>Ubicación</span>
-              </div>
-              <div v-else class="flex items-center gap-2 text-xs opacity-80">
-                <Icon icon="lucide:message-square" class="size-4" /><span>{{ tipoLabel(m.tipo) }}</span>
-              </div>
-              <p class="text-right mt-1 text-[10px] opacity-60">
-                {{ m.created_at ? new Date(m.created_at).toLocaleTimeString('es-BO', { hour: '2-digit', minute: '2-digit' }) : '' }}
-              </p>
-            </div>
-          </div>
-          <div v-if="!mensajes.length" class="text-center text-default-400 py-12">
-            <Icon icon="lucide:message-square-off" class="size-10 mx-auto mb-2 text-default-200" />
-            <p class="text-sm">Sin mensajes aún</p>
-          </div>
-        </template>
+        <div v-if="!mensajes.length" class="text-center text-default-400 py-12">
+          <Icon icon="lucide:message-square-off" class="size-10 mx-auto mb-2 text-default-200" />
+          <p class="text-sm">Sin mensajes aún</p>
+        </div>
       </div>
 
       <div v-if="archivoAdjunto" class="flex items-center gap-3 px-5 py-2 bg-amber-50 border-t border-amber-200">
@@ -105,6 +99,7 @@ import { ref, onMounted, onUnmounted, nextTick } from 'vue'
 import { Icon } from '@iconify/vue'
 import { RouterLink, useRoute } from 'vue-router'
 import Vertical from '@/layouts/vertical.vue'
+import AppLoader from '@/components/AppLoader.vue'
 
 const route = useRoute()
 const BOT   = 'http://localhost:3001'

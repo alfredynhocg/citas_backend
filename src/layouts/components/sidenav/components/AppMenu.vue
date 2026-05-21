@@ -1,6 +1,6 @@
 <template>
   <ul class="side-nav p-3 hs-accordion-group">
-    <template v-for="(item, idx) in menuItems" :key="item.key || idx">
+    <template v-for="(item, idx) in visibleItems" :key="item.key || idx">
       <li v-if="item.isTitle" class="menu-title">
         <span>{{ item.label }}</span>
       </li>
@@ -13,12 +13,18 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { menuItems } from './data'
 import MenuItem from './MenuItem.vue'
 import MenuItemWithChildren from './MenuItemWithChildren.vue'
+import { useAuthStore } from '@/stores/auth'
 
+const auth = useAuthStore()
 const openMenuKey = ref<string | null>(null)
+
+const visibleItems = computed(() =>
+  menuItems.filter(item => !item.requiresAdmin || auth.isAdmin)
+)
 
 const setOpenMenuKey = (key: string | null) => {
   openMenuKey.value = key

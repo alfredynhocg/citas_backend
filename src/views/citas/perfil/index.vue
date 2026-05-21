@@ -6,28 +6,7 @@
         <p class="text-sm text-default-500 mt-0.5">Tu información personal y estado de cuenta.</p>
       </div>
 
-      <div v-if="loading" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div class="card p-6 space-y-5 animate-pulse">
-          <div class="flex flex-col items-center gap-4">
-            <div class="size-24 rounded-2xl bg-default-100" />
-            <div class="space-y-2 w-full">
-              <div class="h-4 bg-default-100 rounded w-3/4 mx-auto" />
-              <div class="h-3 bg-default-100 rounded w-1/2 mx-auto" />
-            </div>
-          </div>
-          <div class="space-y-3">
-            <div class="h-12 bg-default-100 rounded-xl" />
-            <div class="h-12 bg-default-100 rounded-xl" />
-            <div class="h-12 bg-default-100 rounded-xl" />
-          </div>
-        </div>
-        <div class="lg:col-span-2 card p-6 space-y-4 animate-pulse">
-          <div class="h-4 bg-default-100 rounded w-1/4" />
-          <div class="h-10 bg-default-100 rounded-xl" />
-          <div class="h-10 bg-default-100 rounded-xl" />
-          <div class="h-10 bg-default-100 rounded-xl" />
-        </div>
-      </div>
+      <AppLoader v-if="loading" />
 
       <template v-else-if="perfil">
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -201,6 +180,7 @@ import { ref, computed, onMounted } from 'vue'
 import { Icon } from '@iconify/vue'
 import { useAuthStore } from '@/stores/auth'
 import Vertical from '@/layouts/vertical.vue'
+import AppLoader from '@/components/AppLoader.vue'
 
 const auth = useAuthStore()
 const API = import.meta.env.VITE_API_URL ?? 'http://localhost:5000/api'

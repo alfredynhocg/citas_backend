@@ -51,16 +51,7 @@
         </p>
       </div>
 
-      <div v-if="loading" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <div v-for="i in 6" :key="i" class="card animate-pulse overflow-hidden">
-          <div class="h-44 bg-default-100" />
-          <div class="p-4 space-y-3">
-            <div class="h-4 bg-default-100 rounded w-3/4" />
-            <div class="h-3 bg-default-100 rounded" />
-            <div class="h-3 bg-default-100 rounded w-1/2" />
-          </div>
-        </div>
-      </div>
+      <AppLoader v-if="loading" />
 
       <div v-else-if="recuerdos.length" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <div
@@ -296,6 +287,7 @@
 import { ref, onMounted } from 'vue'
 import { Icon } from '@iconify/vue'
 import Vertical from '@/layouts/vertical.vue'
+import AppLoader from '@/components/AppLoader.vue'
 import { useAuthStore } from '@/stores/auth'
 
 const API = import.meta.env.VITE_API_URL ?? 'http://localhost:5000/api'
@@ -331,8 +323,8 @@ function categoryEmoji(cat: string | null): string {
   return CATEGORY_MAP[cat ?? '']?.emoji ?? '📍'
 }
 
-function imagenUrl(url: string | null): string | null {
-  if (!url) return null
+function imagenUrl(url: string | null): string | undefined {
+  if (!url) return undefined
   if (url.startsWith('http')) return url
   return BASE + url
 }

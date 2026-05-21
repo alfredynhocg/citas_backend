@@ -1,7 +1,9 @@
 <template>
   <Vertical>
-  <div class="p-6 space-y-6">
+    <AppLoader v-if="loading" fullPage />
 
+    <template v-else>
+    <div class="p-6 space-y-6">
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
       <div>
         <h1 class="text-2xl font-bold text-default-900">Bienvenido, {{ auth.user?.name?.split(' ')[0] }}</h1>
@@ -17,16 +19,7 @@
       </div>
     </div>
 
-    <!-- Stats cards -->
-    <div v-if="loading" class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-      <div v-for="i in 4" :key="i" class="card p-5 animate-pulse space-y-3">
-        <div class="size-10 rounded-xl bg-default-100" />
-        <div class="h-7 bg-default-100 rounded w-1/2" />
-        <div class="h-3 bg-default-100 rounded w-3/4" />
-      </div>
-    </div>
-
-    <div v-else class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
       <div v-for="stat in stats" :key="stat.label"
         class="card p-5 flex flex-col gap-3 hover:shadow-md transition-shadow">
         <div class="flex items-center justify-between">
@@ -44,16 +37,13 @@
       </div>
     </div>
 
-    <!-- Fila 2: donut + barras de categoría -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
 
-      <!-- Donut de progreso -->
       <div class="card p-6 flex flex-col items-center justify-center text-center lg:col-span-1">
         <p class="text-sm font-semibold text-default-700 mb-4">Progreso General</p>
-        <div v-if="!loading && resumen">
+        <div v-if="resumen">
           <VueApexCharts type="donut" height="220" :options="donutOpts" :series="donutSeries" />
         </div>
-        <div v-else class="size-44 rounded-full bg-default-100 animate-pulse mx-auto" />
         <div class="mt-4 w-full space-y-1">
           <div class="flex justify-between text-xs text-default-500">
             <span>{{ Math.round(pct) }}% completado</span>
@@ -67,16 +57,9 @@
         <p class="mt-3 text-xs text-default-400 italic">{{ motivationalMsg }}</p>
       </div>
 
-      <!-- Barras de progreso por categoría (ApexCharts horizontal) -->
       <div class="card p-6 lg:col-span-2">
         <p class="text-sm font-semibold text-default-700 mb-4">Progreso por Categoría</p>
-        <div v-if="loading" class="space-y-4">
-          <div v-for="i in 4" :key="i" class="space-y-1.5 animate-pulse">
-            <div class="h-3 bg-default-100 rounded w-1/3" />
-            <div class="h-2 bg-default-100 rounded" />
-          </div>
-        </div>
-        <VueApexCharts v-else-if="progresoCategorias.length"
+        <VueApexCharts v-if="progresoCategorias.length"
           type="bar" height="260"
           :options="barOpts" :series="barSeries" />
         <div v-else class="text-center py-6 text-default-400 text-sm">
@@ -85,59 +68,134 @@
       </div>
     </div>
 
-    <!-- Fila 3: línea de tiempo + actividad semanal -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
 
-      <!-- Área: citas completadas por mes -->
       <div class="card p-6">
         <p class="text-sm font-semibold text-default-700 mb-4">Actividad mensual</p>
-        <VueApexCharts v-if="!loading && areaData.length"
+        <VueApexCharts v-if="areaData.length"
           type="area" height="200"
           :options="areaOpts" :series="areaSeries" />
-        <div v-else-if="loading" class="h-48 bg-default-50 rounded-xl animate-pulse" />
         <div v-else class="h-48 flex items-center justify-center text-default-400 text-sm">
           Sin actividad registrada aún.
         </div>
       </div>
 
-      <!-- Radar de categorías -->
       <div class="card p-6">
         <p class="text-sm font-semibold text-default-700 mb-4">Cobertura por categoría</p>
-        <VueApexCharts v-if="!loading && progresoCategorias.length"
+        <VueApexCharts v-if="progresoCategorias.length"
           type="radar" height="200"
           :options="radarOpts" :series="radarSeries" />
-        <div v-else-if="loading" class="h-48 bg-default-50 rounded-xl animate-pulse" />
         <div v-else class="h-48 flex items-center justify-center text-default-400 text-sm">
           Sin datos aún.
         </div>
       </div>
     </div>
 
-    <!-- Últimas citas completadas -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div class="card p-5 flex items-center gap-4">
+        <div class="size-11 rounded-xl bg-amber-100 flex items-center justify-center flex-shrink-0">
+          <Icon icon="lucide:flame" class="size-5 text-amber-500" />
+        </div>
+        <div>
+          <p class="text-2xl font-bold text-default-900">{{ resumen?.racha_dias ?? 0 }}</p>
+          <p class="text-xs text-default-500">Racha de días activos</p>
+        </div>
+      </div>
+      <div class="card p-5 flex items-center gap-4">
+        <div class="size-11 rounded-xl bg-violet-100 flex items-center justify-center flex-shrink-0">
+          <Icon icon="lucide:star" class="size-5 text-violet-500" />
+        </div>
+        <div>
+          <p class="text-2xl font-bold text-default-900">{{ resumen?.cal_promedio ?? '—' }}</p>
+          <p class="text-xs text-default-500">Calificación promedio</p>
+        </div>
+      </div>
+      <div class="card p-5 flex items-center gap-4 min-w-0">
+        <div class="size-11 rounded-xl bg-rose-100 flex items-center justify-center flex-shrink-0">
+          <Icon icon="lucide:trophy" class="size-5 text-rose-500" />
+        </div>
+        <div class="min-w-0">
+          <p class="text-sm font-bold text-default-900 truncate">{{ resumen?.cita_favorita?.nombre ?? '—' }}</p>
+          <p class="text-xs text-default-500">Cita favorita (mejor nota)</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card p-6 space-y-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="size-9 rounded-xl bg-gradient-to-br from-violet-500 to-rose-400 flex items-center justify-center">
+            <Icon icon="lucide:sparkles" class="size-4 text-white" />
+          </div>
+          <div>
+            <p class="text-sm font-semibold text-default-900">Análisis con IA</p>
+            <p class="text-xs text-default-400">Recomendaciones personalizadas basadas en tu progreso</p>
+          </div>
+        </div>
+        <button @click="pedirAnalisisIA" :disabled="iaLoading"
+          class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-violet-500 to-rose-400 text-white text-xs font-semibold hover:opacity-90 disabled:opacity-50 transition-all">
+          <Icon :icon="iaLoading ? 'lucide:loader-circle' : 'lucide:sparkles'" class="size-3.5" :class="{ 'animate-spin': iaLoading }" />
+          {{ iaLoading ? 'Analizando…' : 'Analizar mi progreso' }}
+        </button>
+      </div>
+
+      <div v-if="iaError" class="rounded-xl bg-red-50 border border-red-100 px-4 py-3 text-sm text-red-600 flex items-center gap-2">
+        <Icon icon="lucide:alert-circle" class="size-4 flex-shrink-0" />
+        {{ iaError }}
+      </div>
+
+      <div v-if="analisisIA" class="space-y-4">
+        <div class="rounded-xl bg-gradient-to-br from-violet-50 to-rose-50 border border-violet-100 p-4">
+          <p class="text-sm text-default-700 leading-relaxed">{{ analisisIA.resumen }}</p>
+        </div>
+
+        <div v-if="analisisIA.logro_destacado" class="flex items-start gap-3 px-4 py-3 rounded-xl bg-amber-50 border border-amber-100">
+          <Icon icon="lucide:trophy" class="size-4 text-amber-500 flex-shrink-0 mt-0.5" />
+          <p class="text-sm text-amber-700">{{ analisisIA.logro_destacado }}</p>
+        </div>
+
+        <div v-if="analisisIA.recomendaciones?.length" class="space-y-2">
+          <p class="text-xs font-semibold text-default-600 uppercase tracking-wide">Recomendaciones</p>
+          <div v-for="(rec, i) in analisisIA.recomendaciones" :key="i"
+            class="flex items-start gap-3 px-4 py-3 rounded-xl bg-default-50 border border-default-100">
+            <div class="size-5 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center flex-shrink-0 text-[10px] font-bold mt-0.5">{{ i + 1 }}</div>
+            <p class="text-sm text-default-700">{{ rec }}</p>
+          </div>
+        </div>
+
+        <div v-if="analisisIA.proxima_meta" class="flex items-start gap-3 px-4 py-3 rounded-xl bg-green-50 border border-green-100">
+          <Icon icon="lucide:target" class="size-4 text-green-500 flex-shrink-0 mt-0.5" />
+          <div>
+            <p class="text-[10px] font-semibold text-green-600 uppercase tracking-wide mb-0.5">Próxima meta</p>
+            <p class="text-sm text-green-700">{{ analisisIA.proxima_meta }}</p>
+          </div>
+        </div>
+
+        <div v-if="analisisIA.mensaje_motivacional" class="text-center py-2">
+          <p class="text-sm text-default-500 italic">💕 {{ analisisIA.mensaje_motivacional }}</p>
+        </div>
+      </div>
+
+      <div v-else-if="!iaLoading" class="text-center py-6 text-default-400">
+        <Icon icon="lucide:bot" class="size-10 mx-auto mb-2 text-default-200" />
+        <p class="text-sm">Presiona "Analizar mi progreso" para obtener recomendaciones personalizadas de IA.</p>
+      </div>
+    </div>
+
     <div class="card p-6">
       <div class="flex items-center justify-between mb-5">
         <p class="text-sm font-semibold text-default-700">Últimas citas completadas</p>
         <router-link to="/citas" class="text-xs text-rose-500 hover:underline font-medium">Ver todas</router-link>
       </div>
 
-      <div v-if="loading" class="space-y-3">
-        <div v-for="i in 3" :key="i" class="flex gap-4 animate-pulse">
-          <div class="size-10 rounded-xl bg-default-100 flex-shrink-0" />
-          <div class="flex-1 space-y-2 py-1">
-            <div class="h-3 bg-default-100 rounded w-3/4" />
-            <div class="h-2 bg-default-100 rounded w-1/2" />
-          </div>
-        </div>
-      </div>
-
-      <div v-else-if="!resumen?.citas_recientes?.length" class="text-center py-10 text-default-400">
+      <div v-if="!resumen?.citas_recientes?.length" class="text-center py-10 text-default-400">
         <Icon icon="lucide:heart" class="size-10 mx-auto mb-2 text-rose-200" />
         <p class="text-sm">Aún no han completado ninguna cita.</p>
         <router-link to="/citas" class="text-xs text-rose-500 mt-1 block hover:underline">¡Empezar ahora!</router-link>
       </div>
 
       <div v-else class="space-y-3">
-        <div v-for="cita in resumen.citas_recientes" :key="cita.id"
+        <div v-for="cita in resumen?.citas_recientes" :key="cita.id"
           class="flex items-center gap-4 p-3 rounded-xl hover:bg-default-50 transition-colors">
           <div class="size-10 rounded-xl overflow-hidden flex-shrink-0 bg-rose-100 flex items-center justify-center">
             <img v-if="cita.portada_url" :src="citaImgUrl(cita.portada_url)" :alt="cita.nombre"
@@ -155,8 +213,8 @@
         </div>
       </div>
     </div>
-
-  </div>
+    </div>
+    </template>
   </Vertical>
 </template>
 
@@ -165,6 +223,7 @@ import { ref, computed, onMounted } from 'vue'
 import { Icon } from '@iconify/vue'
 import VueApexCharts from 'vue3-apexcharts'
 import { useAuthStore } from '@/stores/auth'
+import AppLoader from '@/components/AppLoader.vue'
 import Vertical from '@/layouts/vertical.vue'
 
 const auth = useAuthStore()
@@ -184,14 +243,24 @@ interface CitaReciente {
   calificacion: number | null; fecha_completado: string | null; portada_url: string | null
 }
 interface CatProgreso { id: number; nombre: string; total: number; completadas: number }
+interface CitaFavorita { nombre: string; calificacion: number | null; categoria: string | null }
 interface Resumen {
   total_completadas: number; total_recuerdos: number; total_parejas: number
   total_citas: number; pendientes: number
+  cal_promedio: number | null; cita_favorita: CitaFavorita | null; racha_dias: number
+  actividad_mensual: { mes: string; citas: number }[]
   citas_recientes: CitaReciente[]; progreso_categorias: CatProgreso[]
+}
+interface AnalisisIA {
+  resumen: string; logro_destacado: string
+  recomendaciones: string[]; proxima_meta: string; mensaje_motivacional: string
 }
 
 const loading = ref(true)
 const resumen = ref<Resumen | null>(null)
+const analisisIA = ref<AnalisisIA | null>(null)
+const iaLoading = ref(false)
+const iaError = ref('')
 
 const pct = computed(() => {
   if (!resumen.value || !resumen.value.total_citas) return 0
@@ -220,7 +289,6 @@ const stats = computed(() => {
 
 const progresoCategorias = computed(() => resumen.value?.progreso_categorias ?? [])
 
-// ─── Donut ────────────────────────────────────────────────────────────────────
 const donutSeries = computed(() => [
   resumen.value?.total_completadas ?? 0,
   resumen.value?.pendientes ?? 100,
@@ -236,7 +304,6 @@ const donutOpts = computed(() => ({
   stroke: { width: 0 },
 }))
 
-// ─── Barras horizontales por categoría ────────────────────────────────────────
 const barSeries = computed(() => [{
   name: 'Completadas',
   data: progresoCategorias.value.map(c => c.completadas),
@@ -268,7 +335,6 @@ const barOpts = computed(() => ({
   grid: { borderColor: '#f1f5f9' },
 }))
 
-// ─── Área: actividad mensual (últimas 6 citas agrupadas por mes) ──────────────
 const areaData = computed(() => {
   const citas = resumen.value?.citas_recientes ?? []
   const meses: Record<string, number> = {}
@@ -293,7 +359,6 @@ const areaOpts = computed(() => ({
   tooltip: { y: { formatter: (v: number) => `${v} cita${v !== 1 ? 's' : ''}` } },
 }))
 
-// ─── Radar por categoría ───────────────────────────────────────────────────────
 const radarSeries = computed(() => [{
   name: 'Completadas %',
   data: progresoCategorias.value.map(c =>
@@ -317,7 +382,6 @@ const radarOpts = computed(() => ({
   tooltip: { y: { formatter: (v: number) => `${v}%` } },
 }))
 
-// ─── PDF export ───────────────────────────────────────────────────────────────
 function exportarPDF() {
   const r = resumen.value
   if (!r) return
@@ -392,6 +456,25 @@ function formatFecha(iso: string | null) {
   if (diff === 1) return 'Ayer'
   if (diff < 7)  return `Hace ${diff} días`
   return d.toLocaleDateString('es-BO', { day: 'numeric', month: 'short' })
+}
+
+async function pedirAnalisisIA() {
+  iaLoading.value = true
+  iaError.value = ''
+  try {
+    const res = await auth.authFetch(`${API}/dashboard/analisis-ia`)
+    if (res.ok) {
+      const data = await res.json()
+      analisisIA.value = data.analisis
+    } else {
+      const err = await res.json().catch(() => ({}))
+      iaError.value = err.error ?? 'No se pudo obtener el análisis. Verifica que OPENROUTER_API_KEY esté configurada.'
+    }
+  } catch {
+    iaError.value = 'Error de conexión con el servidor.'
+  } finally {
+    iaLoading.value = false
+  }
 }
 
 onMounted(async () => {

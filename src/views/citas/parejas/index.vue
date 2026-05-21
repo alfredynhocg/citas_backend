@@ -7,23 +7,10 @@
         <p class="text-sm text-default-500 mt-0.5">Vincula o gestiona tu pareja romántica.</p>
       </div>
 
-      <div v-if="loading" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div class="card p-6 animate-pulse space-y-4">
-          <div class="flex items-center gap-4">
-            <div class="size-16 rounded-2xl bg-default-100" />
-            <div class="space-y-2 flex-1">
-              <div class="h-4 bg-default-100 rounded w-1/2" />
-              <div class="h-3 bg-default-100 rounded w-1/3" />
-            </div>
-          </div>
-          <div class="h-10 bg-default-100 rounded-xl" />
-          <div class="h-10 bg-default-100 rounded-xl" />
-        </div>
-      </div>
+      <AppLoader v-if="loading" />
 
       <template v-else>
 
-        <!-- Estado: vinculados -->
         <div v-if="pareja" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
           <div class="card p-6 space-y-5">
@@ -91,10 +78,8 @@
           </div>
         </div>
 
-        <!-- Estado: sin pareja -->
         <div v-else class="space-y-6">
 
-          <!-- Código generado tras crear pareja -->
           <transition name="fade">
             <div v-if="codigoGenerado" class="card p-6 space-y-4 border border-green-200 bg-green-50 dark:bg-green-950/20">
               <div class="flex items-center gap-3">
@@ -124,7 +109,6 @@
 
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-            <!-- Crear pareja -->
             <div class="card p-6 space-y-5">
               <div class="flex items-center gap-3">
                 <div class="size-9 rounded-xl bg-rose-100 flex items-center justify-center flex-shrink-0">
@@ -172,7 +156,6 @@
               </form>
             </div>
 
-            <!-- Unirse con código -->
             <div class="card p-6 space-y-5">
               <div class="flex items-center gap-3">
                 <div class="size-9 rounded-xl bg-violet-100 flex items-center justify-center flex-shrink-0">

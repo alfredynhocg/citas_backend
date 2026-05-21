@@ -91,19 +91,7 @@
         </div>
       </div>
 
-      <div v-if="loading" class="card overflow-hidden">
-        <div class="divide-y divide-default-100">
-          <div v-for="i in 6" :key="i" class="flex items-center gap-4 px-5 py-4 animate-pulse">
-            <div class="size-4 bg-default-100 rounded" />
-            <div class="size-10 rounded-full bg-default-100" />
-            <div class="flex-1 space-y-2">
-              <div class="h-3.5 bg-default-100 rounded w-1/3" />
-              <div class="h-3 bg-default-100 rounded w-1/4" />
-            </div>
-            <div class="h-5 w-16 bg-default-100 rounded-full" />
-          </div>
-        </div>
-      </div>
+      <AppLoader v-if="loading" />
 
       <div v-else class="card overflow-hidden">
         <div class="overflow-x-auto">
@@ -152,7 +140,6 @@
                       <Icon icon="lucide:plus" class="size-3" />
                     </button>
                   </div>
-                  <!-- Panel de etiquetas -->
                   <div v-if="expandedConvId === c.id" class="mt-2 p-2 bg-white border border-default-200 rounded-xl shadow-lg flex flex-wrap gap-1.5 z-10">
                     <button v-for="e in etiquetas" :key="e.id"
                       @click="toggleEtiquetaEnConv(c, e.id)"
@@ -199,6 +186,7 @@ import { Icon } from '@iconify/vue'
 import { RouterLink } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import Vertical from '@/layouts/vertical.vue'
+import AppLoader from '@/components/AppLoader.vue'
 
 const auth = useAuthStore()
 const BOT  = 'http://localhost:3001'

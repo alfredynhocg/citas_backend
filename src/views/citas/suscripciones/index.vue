@@ -1,6 +1,8 @@
 <template>
   <Vertical>
-    <div class="p-4 sm:p-6 space-y-6">
+    <AppLoader v-if="loading" fullPage />
+
+    <div v-else class="p-4 sm:p-6 space-y-6">
 
       <div>
         <h1 class="text-2xl font-bold text-default-900">Suscripciones</h1>
@@ -134,16 +136,7 @@
       <div class="space-y-3">
         <h2 class="text-sm font-semibold text-default-700 uppercase tracking-wide">Planes disponibles</h2>
 
-        <div v-if="loadingPlanes" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          <div v-for="i in 3" :key="i" class="card p-6 animate-pulse space-y-3">
-            <div class="h-5 bg-default-100 rounded w-1/2" />
-            <div class="h-8 bg-default-100 rounded w-2/3" />
-            <div class="h-3 bg-default-100 rounded" />
-            <div class="h-10 bg-default-100 rounded-xl" />
-          </div>
-        </div>
-
-        <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <div v-for="plan in planes" :key="plan.id"
             class="card p-6 space-y-4 border-2 transition-colors"
             :class="planSeleccionado?.id === plan.id ? 'border-rose-400' : 'border-transparent hover:border-rose-200'">
@@ -274,6 +267,7 @@
 import { ref, onMounted } from 'vue'
 import { Icon } from '@iconify/vue'
 import Vertical from '@/layouts/vertical.vue'
+import AppLoader from '@/components/AppLoader.vue'
 import { useAuthStore } from '@/stores/auth'
 
 const API = import.meta.env.VITE_API_URL ?? 'http://localhost:5000/api'
@@ -282,6 +276,7 @@ const auth = useAuthStore()
 const planes = ref<any[]>([])
 const suscripciones = ref<any[]>([])
 const pagos = ref<any[]>([])
+const loading = ref(true)
 const loadingPlanes = ref(true)
 const planSeleccionado = ref<any>(null)
 const loadingPago = ref(false)
@@ -423,9 +418,8 @@ async function registrarPago() {
   }
 }
 
-onMounted(() => {
-  cargarPlanes()
-  cargarSuscripciones()
-  cargarPagos()
+onMounted(async () => {
+  await Promise.all([cargarPlanes(), cargarSuscripciones(), cargarPagos()])
+  loading.value = false
 })
 </script>

@@ -1,40 +1,55 @@
-# tailwick_vue
+# 100 Citas Juntos — Frontend
 
-This template should help get you started developing with Vue 3 in Vite.
+Aplicación web para el reto de las 100 Citas Románticas en La Paz, Bolivia. Permite a parejas descubrir, completar y registrar sus citas románticas, seguir su progreso y compartir recuerdos.
 
-## Recommended IDE Setup
+## Stack
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+- **Vue 3** + TypeScript
+- **Vite** como bundler
+- **Tailwind CSS** para estilos
+- **Pinia** para estado global
+- **Vue Router** para navegación
+- **Axios** para comunicación con el backend
 
-## Type Support for `.vue` Imports in TS
+## Requisitos previos
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+- Node.js 18+
+- Backend Flask corriendo en `http://localhost:5000`
 
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
+## Configuración
 
 ```sh
 npm install
 ```
 
-### Compile and Hot-Reload for Development
+Crea un archivo `.env.local` en la raíz con:
+
+```env
+VITE_API_URL=http://localhost:5000/api
+```
+
+## Desarrollo
 
 ```sh
 npm run dev
 ```
 
-### Type-Check, Compile and Minify for Production
+La app estará disponible en `http://localhost:5173`.
+
+## Build para producción
 
 ```sh
 npm run build
 ```
 
-### Lint with [ESLint](https://eslint.org/)
+## Type-check
+
+```sh
+npm run type-check
+```
+
+## Lint
 
 ```sh
 npm run lint
 ```
-"# citas_backend" 
